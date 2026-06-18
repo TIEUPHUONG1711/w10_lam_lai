@@ -29,3 +29,17 @@ jobs:
 
 
 #code này để validate các file yaml trong repo, đảm bảo chúng là các manifest hợp lệ của Kubernetes.          
+
+# Sau LAB 22, pipeline có thêm lớp bảo vệ:
+
+# Developer
+# ↓
+# Git Push
+# ↓
+# Validate YAML
+# ↓
+# Build Push
+# ↓
+# ArgoCD
+# ↓
+# Kubernetes
