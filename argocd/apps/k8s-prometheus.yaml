@@ -23,6 +23,40 @@ spec:
             serviceMonitorSelectorNilUsesHelmValues: false
             ruleSelectorNilUsesHelmValues: false
 
+        alertmanager:
+          config:
+            global:
+              resolve_timeout: 5m
+
+            route:
+              group_by: ['alertname', 'severity']
+              group_wait: 10s
+              group_interval: 5m
+              repeat_interval: 12h
+              receiver: 'email-notifications'
+              routes:
+              - receiver: 'null'
+                matchers:
+                - alertname = "Watchdog"
+
+            receivers:
+            - name: 'null'
+
+            - name: 'email-notifications'
+              email_configs:
+              - to: 'tp17112k4@gmail.com'
+                from: 'tp17112k4@gmail.com'
+                smarthost: 'smtp.gmail.com:587'
+                auth_username: 'tp17112k4@gmail.com'
+                auth_password_file: /etc/alertmanager/secrets/alertmanager-email/smtp-password
+                require_tls: true
+                headers:
+                  Subject: '[W10 Alert] {{ .GroupLabels.alertname }} - {{ .GroupLabels.severity }}'
+
+          alertmanagerSpec:
+            secrets:
+            - alertmanager-email
+
   destination:
     server: https://kubernetes.default.svc
     namespace: monitoring
@@ -38,3 +72,6 @@ spec:
 
 # Ứng dụng này sẽ cài kube-prometheus-stack vào cluster, giúp chúng ta có Prometheus để scrape metrics và Alertmanager để gửi alert.
 #  Ngoài ra, kube-prometheus-stack còn cài sẵn một số ServiceMonitor và PrometheusRule để chúng ta có thể tham khảo.    
+# #helm có email để alertmanager gửi email, nhưng chúng ta sẽ override bằng cách tạo secret alertmanager-email và config alertmanager
+#  để gửi email qua gmail.
+#đây là cầu nối của prometheus-rules và email-secret, giúp alertmanager gửi email khi có alert.

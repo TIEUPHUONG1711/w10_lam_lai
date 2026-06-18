@@ -1,0 +1,77 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+
+metadata:
+  name: argo-rollouts
+  namespace: argocd
+
+  annotations:
+    argocd.argoproj.io/sync-wave: "0"
+
+spec:
+  project: default
+
+  source:
+    repoURL: https://argoproj.github.io/argo-helm
+    chart: argo-rollouts
+    targetRevision: 2.39.6
+
+  destination:
+    server: https://kubernetes.default.svc
+    namespace: argo-rollouts
+
+  syncPolicy:
+    automated:
+      prune: true
+      selfHeal: true
+
+    syncOptions:
+    - CreateNamespace=true
+    - ServerSideApply=true
+
+
+# để ArgoCD cài:
+
+# Argo Rollouts Controller
+# Argo Rollouts CRDs
+
+# Sau lab này, Kubernetes mới hiểu các resource:
+
+# kind: Rollout
+# kind: AnalysisTemplate
+# kind: AnalysisRun
+# Vì sao cần?
+
+# Kubernetes mặc định chỉ hiểu:
+
+# Deployment
+# Service
+# Pod
+# ConfigMap
+# Secret
+
+# Nó không hiểu:
+
+# Rollout
+# AnalysisTemplate
+# AnalysisRun
+
+# Vì vậy nếu chưa cài Argo Rollouts mà apply:
+
+# kind: Rollout
+
+# sẽ lỗi:
+
+# no matches for kind "Rollout"
+# ensure CRDs are installed first
+
+
+# Thứ tự đúng:
+
+# k8s-rollout
+# ↓
+# tạo CRD AnalysisTemplate
+# ↓
+# app-analysis
+# ↓
+# tạo success-rate AnalysisTemplate
