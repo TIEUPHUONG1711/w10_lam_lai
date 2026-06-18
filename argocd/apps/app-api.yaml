@@ -1,0 +1,29 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+
+metadata:
+  name: api
+  namespace: argocd
+
+  annotations:
+    argocd.argoproj.io/sync-wave: "2"
+
+spec:
+  project: default
+
+  source:
+    repoURL: https://github.com/TIEUPHUONG1711/w10_lab.git
+    targetRevision: main
+    path: app-api
+
+  destination:
+    server: https://kubernetes.default.svc
+    namespace: demo
+
+  syncPolicy:
+    automated:
+      prune: true
+      selfHeal: true
+
+    syncOptions:
+    - ServerSideApply=true
