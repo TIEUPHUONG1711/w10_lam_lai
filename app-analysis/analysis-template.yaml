@@ -1,0 +1,30 @@
+apiVersion: argoproj.io/v1alpha1
+kind: AnalysisTemplate
+metadata:
+  name: success-rate
+  namespace: demo
+  labels:
+    app: api
+    owner: phuong
+
+spec:
+  metrics:
+  - name: success-rate
+    interval: 30s
+    count: 3
+    successCondition: result[0] >= 0.95
+    failureLimit: 1
+    provider:
+      prometheus:
+        address: http://kube-prometheus-stack-prometheus.monitoring.svc.cluster.local:9090
+        query: |
+          sum(rate(flask_http_request_total{status!~"5.."}[1m]))
+          /
+          sum(rate(flask_http_request_total[1m]))
+
+
+# AnalysisTemplate sẽ cho Argo Rollouts hỏi Prometheus: Success rate của API hiện tại có tốt không?
+
+# Nếu tốt: Canary tiếp tục 10% → 50% → 100%
+
+# Nếu xấu: Rollout dừng / rollback          

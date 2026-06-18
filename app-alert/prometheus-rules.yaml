@@ -1,0 +1,64 @@
+apiVersion: monitoring.coreos.com/v1
+kind: PrometheusRule
+
+metadata:
+  name: slo-alerts
+  namespace: demo
+  labels:
+    app: api
+    owner: phuong
+    release: kube-prometheus-stack
+
+spec:
+  groups:
+  - name: api-slo.rules
+
+    rules:
+    - alert: ApiHighErrorRate
+      expr: |
+        (
+          sum(rate(flask_http_request_total{status=~"5.."}[1m]))
+          /
+          sum(rate(flask_http_request_total[1m]))
+        ) > 0.05
+      for: 1m
+
+      labels:
+        severity: critical
+        app: api
+
+      annotations:
+        summary: "API high error rate"
+        description: "API error rate is higher than 5% for more than 1 minute."
+
+    - alert: ApiDown
+      expr: |
+        up{job=~".*api.*"} == 0
+      for: 1m
+
+      labels:
+        severity: critical
+        app: api
+
+      annotations:
+        summary: "API target is down"
+        description: "Prometheus cannot scrape the API metrics target."
+
+
+#đoạn code này sẽ tạo ra 2 alert cho Prometheus: ApiHighErrorRate và ApiDown.        
+# Rule 1 — ApiHighErrorRate
+# sum(rate(flask_http_request_total{status=~"5.."}[1m]))
+# /
+# sum(rate(flask_http_request_total[1m]))
+# > 0.05
+
+# Nghĩa là:
+
+# Tỷ lệ request lỗi 5xx > 5%
+
+# trong 1 phút.
+
+# Rule 2 — ApiDown
+# up{job=~".*api.*"} == 0
+
+# Nghĩa là Prometheus không scrape được API.

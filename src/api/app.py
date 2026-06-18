@@ -5,7 +5,7 @@ from prometheus_flask_exporter import PrometheusMetrics
 
 app = Flask(__name__)
 
-# Tự tạo endpoint /metrics cho Prometheus scrape
+# Tự tạo endpoint /metrics rồi expose ra enpoint /metrics để prometheus có thể scrape được metrics của app
 PrometheusMetrics(app)
 
 ERROR_RATE = float(os.getenv("ERROR_RATE", "0"))

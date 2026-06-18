@@ -1,0 +1,30 @@
+apiVersion: monitoring.coreos.com/v1
+kind: ServiceMonitor
+
+# ServiceMonitor sẽ nói cho Prometheus:
+# Scrape service tên api
+# ở namespace demo
+# port http
+# path /metrics
+# mỗi 15s
+
+metadata:
+  name: api
+  namespace: demo
+  labels:
+    app: api
+    owner: phuong
+
+spec:
+  selector:
+    matchLabels:
+      app: api
+
+  namespaceSelector:
+    matchNames:
+    - demo
+
+  endpoints:
+  - port: http
+    path: /metrics
+    interval: 15s
