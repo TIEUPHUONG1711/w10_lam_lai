@@ -1,0 +1,29 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+
+metadata:
+  name: alert
+  namespace: argocd
+
+  annotations:
+    argocd.argoproj.io/sync-wave: "1"
+
+spec:
+  project: default
+
+  source:
+    repoURL: https://github.com/TIEUPHUONG1711/w10_lab.git
+    targetRevision: main
+    path: app-alert
+
+  destination:
+    server: https://kubernetes.default.svc
+    namespace: demo
+
+  syncPolicy:
+    automated:
+      prune: true
+      selfHeal: true
+
+    syncOptions:
+    - ServerSideApply=true
