@@ -79,3 +79,7 @@ spec:
           duration: 2m
 
       - setWeight: 100
+
+
+# Sau khi tạo và áp dụng các policy Gatekeeper, mọi ứng dụng được deploy (kể cả bằng Rollout) 
+# đều phải tuân thủ các policy đó, nếu không quá trình deploy sẽ bị Gatekeeper chặn.      
