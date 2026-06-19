@@ -6,6 +6,9 @@ metadata:
 
 spec:
   match:
+    namespaces:
+    - demo
+
     kinds:
     - apiGroups: ["apps"]
       kinds: ["Deployment"]

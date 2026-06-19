@@ -5,8 +5,10 @@ metadata:
   name: disallow-hostnetwork
 
 spec:
-  match: #Policy áp dụng cho resource nào
-    kinds: #Tôi muốn kiểm tra loại resource nào
+  match:
+    namespaces:
+    - demo
+
+    kinds:
     - apiGroups: ["apps"]
       kinds: ["Deployment"]
-      #và áp dụng cho Deployment thuộc apps/v1
