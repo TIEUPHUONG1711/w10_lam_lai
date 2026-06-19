@@ -23,3 +23,31 @@ spec:
 
 #OPA là policy engine có nhiệm vụ đọc policy và đánh giá policy, opa dùng ngôn ngữ : rego
 #vì opa ko tích hợp trực tiếp với k8s nên cần gatekeeper để làm cầu nối giữa opa và k8s
+
+# Flow đúng là:
+
+# Bạn viết policy
+# ↓
+# ConstraintTemplate
+# ↓
+# Constraint
+# ↓
+# Gatekeeper
+# ↓
+# Kubernetes Admission Controller
+# ↓
+# Allow / Deny resource
+
+# Trong đó:
+
+# ConstraintTemplate
+# = định nghĩa luật kiểm tra là gì
+
+# Constraint
+# = áp dụng luật đó ở đâu, enforce kiểu gì
+
+# Gatekeeper
+# = controller/webhook kết nối policy với Kubernetes
+
+# Kubernetes
+# = trước khi tạo resource sẽ hỏi Gatekeeper

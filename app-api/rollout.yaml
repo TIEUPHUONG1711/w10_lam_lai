@@ -9,7 +9,7 @@ metadata:
     argocd.argoproj.io/sync-wave: "0"
 
 spec:
-  replicas: 5 #chạy 5 pod api
+  replicas: 5
 
   selector:
     matchLabels:
@@ -20,6 +20,7 @@ spec:
       labels:
         app: api
         owner: phuong
+
     spec:
       containers:
       - name: api
@@ -33,6 +34,7 @@ spec:
         env:
         - name: VERSION
           value: "v2"
+
         - name: ERROR_RATE
           value: "0"
 
@@ -41,28 +43,39 @@ spec:
             path: /healthz
             port: 8080
           initialDelaySeconds: 5
+          periodSeconds: 10
 
         readinessProbe:
           httpGet:
             path: /healthz
             port: 8080
           initialDelaySeconds: 3
+          periodSeconds: 10
 
         resources:
-          limits:
-            cpu: 200m
-            memory: 128Mi
           requests:
             cpu: 200m
             memory: 128Mi
+          limits:
+            cpu: 200m
+            memory: 128Mi
+
+        securityContext:
+          runAsNonRoot: true
+          runAsUser: 10001
+          allowPrivilegeEscalation: false
 
   strategy:
     canary:
       steps:
       - setWeight: 10
+
       - pause:
           duration: 2m
+
       - setWeight: 50
+
       - pause:
           duration: 2m
+
       - setWeight: 100
